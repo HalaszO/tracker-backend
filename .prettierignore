@@ -1,0 +1,8 @@
+
+  **/node_modules
+  **/dist
+  **/yarn.lock
+  **/*.scss.d.ts
+  **/webpack.prod.js
+  **/webpack.dev.js
+  **/webpack.common.js

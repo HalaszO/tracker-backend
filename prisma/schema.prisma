@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model UserDetails {
+  id  String @id @map("_id") @db.ObjectId @default(auto())
+  weight Number?
+  height Number?
+  unit Unit @default(Metric)
+}
+
+model User {
+  id  String @id @map("_id") @db.ObjectId @default(auto())
+  firstName String
+  lastName String
+  email String @unique
+  password String?
+  birthDate Date
+  createdAt DateTime @default(now())
+}
+
+model AuthProvider {
+  id String @id @map("_id") @db.ObjectId @default(auto())
+  user User @relation(fields: [userId], references: [id])
+  userId String @db.ObjectId
+  googleAccountId String?
+}
+
+model Exercise {
+  id  String @id @map("_id") @db.ObjectId @default(auto())
+  name String @unique
+  description String
+  instructions String
+  bodyParts BodyPart[]
+  category Category // mutually exclusive
+}
+
+model Workout {
+  id  String @id @map("_id") @db.ObjectId @default(auto())
+  user User @relation(fields: [userId], references: [id])
+  userId String @db.ObjectId
+  notes String
+  exercises WorkoutExercise[]
+  createdAt DateTime @default(now())
+  isCompleted Boolean
+}
+
+
+type WorkoutExercise {
+   exercise Exercise @relation(fields: [exerciseId], references: [id])
+   exerciseId String @db.ObjectId
+   sets Set[]
+}
+
+type Set {
+  index Int
+  weight Number?
+  unit Unit @default(Metric)
+  isCompleted Boolean @default(false)
+  reps Int
+}
+
+
+enum Unit {
+  Metric
+  Imperial
+}
+
+
+enum Category {
+  Cardio
+  Other
+  Machine
+  Dumbbell
+  Barbell
+  Kettlebell
+  Assisted
+  Bodyweight
+}
+
+// Equipment?
+
+enum BodyPart {
+  Biceps
+  Triceps
+  Chest
+  Back
+  Shoulders
+  Quadriceps
+  Glutes
+  Hamstring
+  Calves
+  Core
+  FullBody
+}
